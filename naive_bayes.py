@@ -15,7 +15,7 @@ def read_testing(name):
     test_unknown = []
     with open(name, 'r', encoding='utf-8') as csvfile:
         for row in csv.reader(csvfile):
-            test_unknown.append(row[3])
+            test_unknown.append((row[0],row[3]))
     return test_unknown
 
 # Read in training and testing data
@@ -63,29 +63,25 @@ def find_probability(word_list, prob, main_dic, t_dic, alpha):
 
 # make predictions
 def test(test_list, alpha, sentiments):
-    positive_predictions, negative_predictions = [], []
+    predictions = []
     for sentence in test_list:
-        words = clean_sentence(sentence)
+        words = clean_sentence(sentence[1])
         probabilities = [
             find_probability(words, prob_pos, main_dict, pos_dict, alpha),
             find_probability(words, prob_neg, main_dict, neg_dict, alpha)
         ]
         predicition = sentiments[probabilities.index(max(probabilities))]
         if predicition == 1:
-            positive_predictions.append(sentence)
+            predictions.append((sentence[0], "1"))
         else:
-            negative_predictions.append(sentence)
-    return positive_predictions, negative_predictions
+            predictions.append((sentence[0], "0"))
+    return predictions
 
 # run predictions with a range of alphas
 sentiments = [1, 0]
-positive_predictions, negative_predictions = test(test_unknown, 0.2, sentiments)
+predictions = test(test_unknown, 0.2, sentiments)
 
 f = open('results.csv', 'w+', encoding='utf-8')
-print(f"{len(positive_predictions)} positive predictions found, printing to results.csv.")
-for prediction in positive_predictions:
-    f.write(f"1, {prediction} \n")
-print(f"{len(negative_predictions)} negative predictions found, printing to results.csv.")
-for prediction in negative_predictions:
-    f.write(f"0, {prediction} \n")
+for prediction in predictions:
+    f.write(f"{prediction[0]}, {prediction[1]} \n")
 
