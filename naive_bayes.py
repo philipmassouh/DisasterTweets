@@ -81,7 +81,7 @@ def test(test_list, alpha, sentiments):
 sentiments = [1, 0]
 predictions = test(test_unknown, 0.2, sentiments)
 
-f = open('results.csv', 'w+', encoding='utf-8')
+f = open('results1.csv', 'w+', encoding='utf-8')
 for prediction in predictions:
     f.write(f"{prediction[0]}, {prediction[1]} \n")
 
